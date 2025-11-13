@@ -2,6 +2,19 @@
 
 Lihtne Flask chat bot Docker'is (Ubuntu Server VM, VirtualBox NAT).
 
+## Autor
+
+Stever
+
+## Kirjeldus
+
+Flask-põhine chat bot, mis vastab lihtsatele küsimustele. Demonstreerib:
+
+- Dockerfile kirjutamist
+- Multi-container setup (Docker Compose)
+- Nginx reverse proxy
+- Image publitseerimist Docker Hub'is
+
 ## Kiirkäivitamine
 docker build -t chatbot-app .
 docker run -d -p 5001:5000 --name chatbot chatbot-app
@@ -10,11 +23,6 @@ Ava: http://localhost:5000
 ## Docker Compose + Nginx
 docker compose up -d
 Ava: http://localhost:8088
-
-## API
-GET /            -> HTML UI
-POST /api/chat   -> body: {"message":"tere"}
-GET /api/stats   -> container info
 
 ## Docker Hub
 Image: https://hub.docker.com/r/steve380/chatbot-app
