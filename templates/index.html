@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker Chat Bot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);height:100vh;display:flex;justify-content:center;align-items:center}
+.chat-container{width:400px;height:600px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;flex-direction:column}
+.chat-header{background:#667eea;color:#fff;padding:20px;text-align:center;border-radius:10px 10px 0 0}
+.chat-messages{flex:1;padding:20px;overflow-y:auto;background:#f8f9fa}
+.message{margin:10px 0;padding:10px 15px;border-radius:18px;max-width:80%}
+.user-message{background:#667eea;color:#fff;margin-left:auto}
+.bot-message{background:#e9ecef;color:#333}
+.chat-input{display:flex;padding:20px;background:#fff;border-radius:0 0 10px 10px}
+input{flex:1;padding:10px;border:2px solid #e9ecef;border-radius:20px;outline:none}
+button{margin-left:10px;padding:10px 20px;background:#667eea;color:#fff;border:none;border-radius:20px;cursor:pointer}
+button:hover{background:#5568d3}
+.container-info{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.7);color:#fff;padding:5px 10px;border-radius:5px;font-size:12px;font-family:monospace}
+</style>
+</head>
+<body>
+<div class="container-info" id="containerInfo">Loading...</div>
+<div class="chat-container">
+  <div class="chat-header">
+    <h2>Docker Chat Bot</h2>
+    <p>Tudeng: <strong>[Stever]</strong></p>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="message bot-message">
+      Tere! Olen Docker container'is töötav chat bot. Proovi: "tere", "kuidas", "kes", "aeg", "info"
+    </div>
+  </div>
+  <div class="chat-input">
+    <input type="text" id="messageInput" placeholder="Kirjuta sõnum..." onkeypress="if(event.key==='Enter') sendMessage()">
+    <button onclick="sendMessage()">Saada</button>
+  </div>
+</div>
+<script>
+fetch('/api/stats').then(r=>r.json()).then(d=>{
+  document.getElementById('containerInfo').innerText=`Container: ${d.container_id}`;
+});
+function sendMessage(){
+  const input=document.getElementById('messageInput'); const message=input.value.trim();
+  if(!message) return; addMessage(message,'user-message'); input.value='';
+  fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message})})
+  .then(r=>r.json()).then(d=>addMessage(d.response,'bot-message'))
+  .catch(()=>addMessage('Viga: Server ei vasta','bot-message'));
+}
+function addMessage(text,cls){
+  const div=document.createElement('div'); div.className=`message ${cls}`; div.textContent=text;
+  const box=document.getElementById('chatMessages'); box.appendChild(div); div.scrollIntoView();
+}
+</script>
+</body>
+</html>
